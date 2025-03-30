@@ -1,0 +1,34 @@
+---
+title: My dynamic report
+author: "Spencer Reinsfield - srei868"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+body {
+  font-family: 'Ariel', sans-serif;
+  color: #000000;
+  background-color: #ECECEC;
+  margin: 10px;
+  padding: 10px;
+}
+```
+
+## Using R Studio to analyse coffee shop order data
+
+You need to change the contents of this Rmd! Replace the R code and markdown give below in this template document.
+
+```{r}
+pets <- c("cat", "dog", "turtle", "rabbit")
+best_pet <- pets[1]
+
+```
+
+The best pet to have is a `r best_pet` of course!
+
+![](https://c.tenor.com/-qBsG1HwR4oAAAAC/tenor.gif)
