@@ -27,112 +27,96 @@ h1 {
 
 ## Using R Studio to analyse coffee shop order data
 
-To explore the data that was collected, we need to log the data with renamed csv file variables. The file that performs this task is exploration.R. Here is the code to do this:
-
-```{r file='exploration.R', eval=FALSE, echo=TRUE}
-```
+To explore the data that was collected, we need to log the data with renamed csv file variables. The file that performs this task is exploration.R.
 
 Now that this is complete, we can add some code to the end of exploration.R to produce bar chart and summary values.
 
 # What is the most popular coffee drink at the University of Auckland's Ora Cafe?
 
-Using the data we have collected, we will generate a bar chart to compare the number of orders of each drink that was ordered during the data collection process.
+Using the data set, we will generate a bar chart to compare the number of orders of each drink that was ordered.
 
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")  # Import exploration.R
+```{r, eval=TRUE, echo=FALSE}
+library(tidyverse)
+library(magick)
+logged_data <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vRnfLyTKVyX5-jXaBNIPl004RH4PzWjIu-nP7fWblJZMbMi61H8gjTIXQYr0es24LiAs4lJfQm9K-kd/pub?gid=415879415&single=true&output=csv"
+logged_data <- read_csv(logged_data)
+
+# Change the variable names because they would be a question without rename()
+logged_data_renamed <- logged_data %>%
+  rename(temperature = 2,
+         drink_name = 3,
+         drink_type = 4,
+         size = 5,
+         time_to_make = 6)
 
 # Create the plots and values
 logged_data_renamed %>%
   ggplot() + geom_bar(aes(x = drink_name)) + labs(title = "Number of Coffee Orders")
+names_vector <- logged_data_renamed$drink_name
+most_observed_drink <- sum(names_vector == "Flat White")
+paste0(most_observed_drink, " orders were a Flat White.")
+
 ```
 
 According to the bar chart, the most popular coffee drink at the University of Auckland's Ora Cafe is the Flat White. This makes sense as the Flat White is an especially popular in Australia and New Zealand as a whole.
 
 # Is it more likely that an order at the University of Auckland's Ora Cafe is takeaway?
 
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
-
+```{r, eval=TRUE, echo=FALSE}
 logged_data_renamed %>%
   ggplot() + geom_bar(aes(x = drink_type)) + labs(title = "Coffee Orders that were Takeaway or Dine In")
-```
-
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
 # table() is a function taught in STATS 20x
 table(logged_data_renamed$drink_type)
+num_takeaway <- sum(logged_data_renamed$drink_type == "Takeaway")
+num_dine_in <- sum(logged_data_renamed$drink_type == "Dine in")
+paste0("The data set observed ", num_takeaway, " takeaway orders and ", num_dine_in, " dine in orders.")
 ```
-
-According to the bar chart, it is more likely that a coffee order is takeaway than dine in. The number of takeaway orders observed is 13 and the number of dine in orders observed is 7.
 
 # Is it more likely that an order at the University of Auckland's Ora Cafe is a large size?
 
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
-
+```{r, eval=TRUE, echo=FALSE}
 logged_data_renamed %>%
   ggplot() + geom_bar(aes(x = size)) + labs(title = "Coffee Orders that were Medium or Large")
-```
-
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
 # table() is a function taught in STATS 20x
 table(logged_data_renamed$size)
-```
-
-According to the bar chart, it is more likely that a coffee order is large than medium. The number of large coffee orders observed is 11, the number of medium coffee orders observed is 5, and the number coffee orders that had no size option is 4. The 'Not Applicable' variable is assigned when a drink does not have a size option. This variable is assigned especially to cold drinks.
-
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
-# Use table() with square brackets to get size given temperature = "Cold"
-table(logged_data_renamed$size[logged_data_renamed$temperature == "Cold"])
-```
-
-This code checks when the coffee order has a 'Not Applicable' size given that the drink is cold. Since there were 3 observations of this, the 4th observation was a hot drink. This 4th observation happened on the 18th observation, and it was an espresso order.
-
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
-# Check each variable on row 18
-logged_data_renamed[18, c("size", "drink_name", "drink_type", "temperature", "time_to_make")]
 ```
 
 Now that we have explored interesting components about our categorical variables, lets analyse the data sets only numeric value, time_to_make. First let's check the mean time_to_make and minimum time_to_make.
 
 # How long on average does it take to complete a coffee order at the University of Auckland's Ora Cafe?
 
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
+```{r, eval=TRUE, echo=FALSE}
 # Find the mean time_to_make
-logged_data_renamed$time_to_make %>%
+num_observations <- logged_data_renamed$time_to_make %>%
+  length()
+computed_mean <- logged_data_renamed$time_to_make %>%
   mean() %>% round(1)
+paste0("The mean computing time to complete a coffee order from ", num_observations, " observations recorded was ", computed_mean, " seconds.")
 ```
 
-According to the summary output for the mean, the mean time it took to complete a coffee order is 216.5 seconds (1 d.p).
+The summary output for the mean time to complete a coffee order may change as more observations are recorded in the data set.
 
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
-
+```{r, eval=TRUE, echo=FALSE}
 # Find the lowest recorded instance of time_to_make
-logged_data_renamed$time_to_make %>%
+num_observations <- logged_data_renamed$time_to_make %>%
+  length()
+computed_min <- logged_data_renamed$time_to_make %>%
   min() %>% round(1)
+paste0("The minimum computing time to complete a coffee order from ", num_observations, " observations recorded was ", computed_min, " seconds.")
 ```
 
-According to the summary output for the minimum, the lowest recorded instance it took to complete a coffee order was 72.2 seconds (1 d.p). This instance occurred on the 13th observation, which was a takeaway Flat White.
+The summary output for the minimum time to complete a coffee order may change as more observations are recorded in the data set.
 
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
-# Check each variable on row 13
-logged_data_renamed[13, c("size", "drink_name", "drink_type", "temperature", "time_to_make")]
-```
+This minimum value makes me wonder how the mean time it takes to complete a hot coffee order compares to the mean time it takes to complete a cold coffee order.
 
-This minimum value makes me wonder how the mean time it takes to complete a hot coffee order compares to the mean time it takes to complete a cold coffee order. Here is the code for this:
-
-```{r, eval=TRUE, echo=TRUE}
-source("exploration.R")
-logged_data_renamed$time_to_make[logged_data_renamed$temperature == "Hot"] %>%
+```{r, eval=TRUE, echo=FALSE}
+# Compute mean time given hot order and mean time given cold order
+mean_given_hot <- logged_data_renamed$time_to_make[logged_data_renamed$temperature == "Hot"] %>%
   mean() %>% round(1)
-logged_data_renamed$time_to_make[logged_data_renamed$temperature == "Cold"] %>%
+mean_given_cold <- logged_data_renamed$time_to_make[logged_data_renamed$temperature == "Cold"] %>%
   mean() %>% round(1)
+paste0("Given that the coffee order was hot, the mean computing time to complete a coffee order from ", num_observations, " observations recorded was ", mean_given_hot, " seconds.")
+paste0("Given that the coffee order was cold, the mean computing time to complete a coffee order from ", num_observations, " observations recorded was ", mean_given_cold, " seconds.")
 ```
 
-According to the summary outputs the mean time it takes to complete a hot coffee order is greater than the mean time it takes to complete a cold coffee order. This makes sense since in most hot coffee orders, the barista needs to steam milk which take more than just pouring cold milk into a cold drink order.
+According to the summary outputs the mean time it takes to complete a hot coffee order is greater than the mean time it takes to complete a cold coffee order. This makes sense since in most hot coffee orders, the barista needs to steam milk which take more than just pouring cold milk into a cold drink order. That being said, the means can change as more observations are recorded in the data set.
